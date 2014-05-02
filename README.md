@@ -1,4 +1,5 @@
 hardcorejs
 ==========
 
-frontend pdp course
+Frontend PDP Course
+HW1: Git
