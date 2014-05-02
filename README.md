@@ -2,4 +2,4 @@ hardcorejs
 ==========
 
 Frontend PDP Course
-HW1: Git
+HW1: Git (dev branch)
