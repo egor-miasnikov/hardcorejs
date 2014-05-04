@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+    <div>
+        <button onclick="crudFunc()">Do CRUD</button>
+    </div>
+    <div>
+        <button onclick="viewTechTalks()">View TechTalks</button>
+        <div id="alert"></div>
+        <div id="techTalks"></div>
+    </div>
+<script src="hw2.js"></script>
+<script>
+    var api = new API(),
+        data = {
+            "date": "4\/21\/2014",
+            "title": "AJAX",
+            "lector": [
+                "alena_karaba"
+            ],
+            "location": "K1\/3",
+            "description": "some description",
+            "level": "D1-D5",
+            "notes": "",
+            "attendees": [
+                "alena_karaba"
+            ],
+            "tags": [
+                "ajax",
+                "xmlhttprequest",
+                "promises"
+            ]},
+            url = 'http://54.72.3.96:3000/techtalks',
+            ttId = '',
+            crudFunc,
+            viewTechTalks,
+            techTalks = [];
+
+    crudFunc = function() {
+        api.post(url, data)
+            .then(function (res) {
+                ttId = res._id;
+                url += '/' + ttId;
+                api.put(url, {"_id": ttId, "description": "Egor Miasnikov was here :)"})
+                    .then(function (response) {
+                        console.log("Success!", response);
+                        api.delete(url)
+                            .then(function (response) {
+                                console.log("Success!", response);
+                            })
+                            .catch(function (error) {
+                                console.error("Failed!", error);
+                            });
+                    })
+                    .catch(function (error) {
+                        console.error("Failed!", error);
+                    });
+
+                console.log("Success!", response);
+            })
+            .catch(function (error) {
+                console.log("Failed!", error);
+            });
+    };
+
+    viewTechTalks = function(){
+        api.get(url)
+                .then(function(response){
+                    var container = document.getElementById('techTalks');
+                    for(var tt in response){
+                        if(response[tt].lector && response[tt].lector.length){
+                            var techTalk = response[tt],
+                                fullLectors = [];
+                            techTalk.lector.forEach(function(item){
+                                var url = 'http://54.72.3.96:3000/attendees/'+item;
+                                api.get(url)
+                                        .then(function(response){
+                                            console.log('response',response);
+                                            fullLectors.push(response);
+                                        })
+                                        .catch(function(error){
+                                            var alert = document.getElementById('alert');
+                                            alert.style.backgroundColor = 'red';
+                                            alert.innerHTML = error.message;
+                                        });
+                            });
+                            var lectors = document.createElement('div'),
+                                hr = document.createElement('hr'),
+                                title = document.createElement('h3'),
+                                lectorsList = document.createElement('ul'),
+                                tagList = document.createElement('ul'),
+                                tags = document.createElement('div'),
+                                location = document.createElement('div'),
+                                date = document.createElement('div'),
+                                description = document.createElement('div');
+
+                            title.innerHTML = techTalk.title;
+                            container.appendChild(title);
+                            lectors.innerHTML = 'lectors: ';
+                            container.appendChild(lectors);
+
+                            fullLectors.forEach(function(lector){
+                                var text = lector.full_name + " - " + lector.email[0],
+                                    li = document.createElement('li');
+                                li.innerHTML = text;
+                                lectorsList.appendChild(li);
+                            });
+                            container.appendChild(lectorsList);
+                            description.innerHTML = 'Description: ' + techTalk.description;
+                            container.appendChild(description);
+                            location.innerHTML = 'Location: ' + techTalk.location;
+                            date.innerHTML = 'Date: ' + techTalk.date;
+                            container.appendChild(location);
+                            container.appendChild(date);
+                            tags.innerHTML = 'Tags:';
+                            container.appendChild(tags);
+                            if(techTalk.tags && techTalk.tags.length){
+                                techTalk.tags.forEach(function(tag){
+                                    var li = document.createElement('li');
+                                    li.innerHTML = tag;
+                                    tagList.appendChild(li);
+                                });
+                            }
+                            container.appendChild(tagList);
+
+                            container.appendChild(hr);
+
+
+                        }
+
+                    }
+                })
+                .catch(function(error){
+                    var alert = document.getElementById('alert');
+                    alert.style.backgroundColor = 'red';
+                    alert.innerHTML = error.message;
+                })
+    }
+
+</script>
+</body>
+</html>
