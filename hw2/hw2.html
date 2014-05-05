@@ -7,6 +7,7 @@
 <body>
     <div>
         <button onclick="crudFunc()">Do CRUD</button>
+        <div id="crud"></div>
     </div>
     <div>
         <button onclick="viewTechTalks()">View TechTalks</button>
@@ -41,15 +42,28 @@
             techTalks = [];
 
     crudFunc = function() {
+        var container = document.getElementById('crud'),
+            statusList = document.createElement('ul'),
+            postEnd = document.createElement('li'),
+            putEnd = document.createElement('li'),
+            deleteEnd = document.createElement('li');
+
         api.post(url, data)
             .then(function (res) {
+                postEnd.innerHTML = "POST: Success!";
+                statusList.appendChild(postEnd);
+                container.appendChild(statusList);
                 ttId = res._id;
                 url += '/' + ttId;
                 api.put(url, {"_id": ttId, "description": "Egor Miasnikov was here :)"})
                     .then(function (response) {
+                        putEnd.innerHTML = "PUT: Success!";
+                        statusList.appendChild(putEnd);
                         console.log("Success!", response);
                         api.delete(url)
                             .then(function (response) {
+                                deleteEnd.innerHTML = "DELETE: Success!";
+                                statusList.appendChild(deleteEnd);
                                 console.log("Success!", response);
                             })
                             .catch(function (error) {
@@ -69,76 +83,73 @@
 
     viewTechTalks = function(){
         api.get(url)
-                .then(function(response){
-                    var container = document.getElementById('techTalks');
-                    for(var tt in response){
-                        if(response[tt].lector && response[tt].lector.length){
-                            var techTalk = response[tt],
-                                fullLectors = [];
-                            techTalk.lector.forEach(function(item){
-                                var url = 'http://54.72.3.96:3000/attendees/'+item;
-                                api.get(url)
-                                        .then(function(response){
-                                            console.log('response',response);
-                                            fullLectors.push(response);
-                                        })
-                                        .catch(function(error){
-                                            var alert = document.getElementById('alert');
-                                            alert.style.backgroundColor = 'red';
-                                            alert.innerHTML = error.message;
-                                        });
+            .then(function(response){
+                var container = document.getElementById('techTalks');
+                for(var tt in response){
+                    if(response[tt].lector && response[tt].lector.length){
+                        var techTalk = response[tt],
+                            fullLectors = [];
+                        techTalk.lector.forEach(function(item){
+                            var url = 'http://54.72.3.96:3000/attendees/'+item;
+                            api.get(url)
+                                    .then(function(response){
+                                        console.log('response',response);
+                                        fullLectors.push(response);
+                                    })
+                                    .catch(function(error){
+                                        var alert = document.getElementById('alert');
+                                        alert.style.backgroundColor = 'red';
+                                        alert.innerHTML = error.message;
+                                    });
+                        });
+                        var lectors = document.createElement('div'),
+                            hr = document.createElement('hr'),
+                            title = document.createElement('h3'),
+                            lectorsList = document.createElement('ul'),
+                            tagList = document.createElement('ul'),
+                            tags = document.createElement('div'),
+                            location = document.createElement('div'),
+                            date = document.createElement('div'),
+                            description = document.createElement('div');
+
+                        title.innerHTML = techTalk.title;
+                        container.appendChild(title);
+                        lectors.innerHTML = 'lectors: ';
+                        container.appendChild(lectors);
+
+                        fullLectors.forEach(function(lector){
+                            var text = lector.full_name + " - " + lector.email[0],
+                                li = document.createElement('li');
+                            li.innerHTML = text;
+                            lectorsList.appendChild(li);
+                        });
+                        container.appendChild(lectorsList);
+                        description.innerHTML = 'Description: ' + techTalk.description;
+                        container.appendChild(description);
+                        location.innerHTML = 'Location: ' + techTalk.location;
+                        date.innerHTML = 'Date: ' + techTalk.date;
+                        container.appendChild(location);
+                        container.appendChild(date);
+                        tags.innerHTML = 'Tags:';
+                        container.appendChild(tags);
+                        if(techTalk.tags && techTalk.tags.length){
+                            techTalk.tags.forEach(function(tag){
+                                var li = document.createElement('li');
+                                li.innerHTML = tag;
+                                tagList.appendChild(li);
                             });
-                            var lectors = document.createElement('div'),
-                                hr = document.createElement('hr'),
-                                title = document.createElement('h3'),
-                                lectorsList = document.createElement('ul'),
-                                tagList = document.createElement('ul'),
-                                tags = document.createElement('div'),
-                                location = document.createElement('div'),
-                                date = document.createElement('div'),
-                                description = document.createElement('div');
-
-                            title.innerHTML = techTalk.title;
-                            container.appendChild(title);
-                            lectors.innerHTML = 'lectors: ';
-                            container.appendChild(lectors);
-
-                            fullLectors.forEach(function(lector){
-                                var text = lector.full_name + " - " + lector.email[0],
-                                    li = document.createElement('li');
-                                li.innerHTML = text;
-                                lectorsList.appendChild(li);
-                            });
-                            container.appendChild(lectorsList);
-                            description.innerHTML = 'Description: ' + techTalk.description;
-                            container.appendChild(description);
-                            location.innerHTML = 'Location: ' + techTalk.location;
-                            date.innerHTML = 'Date: ' + techTalk.date;
-                            container.appendChild(location);
-                            container.appendChild(date);
-                            tags.innerHTML = 'Tags:';
-                            container.appendChild(tags);
-                            if(techTalk.tags && techTalk.tags.length){
-                                techTalk.tags.forEach(function(tag){
-                                    var li = document.createElement('li');
-                                    li.innerHTML = tag;
-                                    tagList.appendChild(li);
-                                });
-                            }
-                            container.appendChild(tagList);
-
-                            container.appendChild(hr);
-
-
                         }
+                        container.appendChild(tagList);
 
+                        container.appendChild(hr);
                     }
-                })
-                .catch(function(error){
-                    var alert = document.getElementById('alert');
-                    alert.style.backgroundColor = 'red';
-                    alert.innerHTML = error.message;
-                })
+                }
+            })
+            .catch(function(error){
+                var alert = document.getElementById('alert');
+                alert.style.backgroundColor = 'red';
+                alert.innerHTML = error.message;
+            })
     }
 
 </script>
