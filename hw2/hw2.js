@@ -26,26 +26,29 @@ function API(){
         });
     };
 
-    this.get = function (url) {
+    return {
+        get: function (url) {
         var type = 'GET',
             data = false,
             contentType = 'text/plain; charset=UTF-8';
         return xhr(type, url, data, contentType);
-    };
-    this.post = function (url, data) {
-        var type = 'POST',
-            contentType = "application/json;charset=UTF-8";
-        return xhr(type, url, JSON.stringify(data), contentType);
-    };
-    this.put = function (url, data) {
-        var type = 'PUT',
-            contentType = "application/json;charset=UTF-8";
-        return xhr(type, url, JSON.stringify(data), contentType);
-    };
-    this.delete = function (url) {
-        var type = 'DELETE',
-            data = false,
-            contentType = 'text/plain; charset=UTF-8';
-        return xhr(type, url, data, contentType);
-    };
+        },
+        post: function (url, data) {
+            var type = 'POST',
+                contentType = "application/json;charset=UTF-8";
+            return xhr(type, url, JSON.stringify(data), contentType);
+        },
+        put: function (url, data) {
+            var type = 'PUT',
+                contentType = "application/json;charset=UTF-8";
+            return xhr(type, url, JSON.stringify(data), contentType);
+        },
+        delete: function (url) {
+            var type = 'DELETE',
+                data = false,
+                contentType = 'text/plain; charset=UTF-8';
+            return xhr(type, url, data, contentType);
+        }
+    }
+
 };
