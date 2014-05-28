@@ -1,0 +1,94 @@
+$topMenuColor = #6b9ad0;
+$topMenuHoverColor = #7ca7d9;
+$borderElementColor = #6794b7;
+$borderColor = #e2e5e8;
+$mainFontColor = #69747c;
+body{
+    margin 0;
+    font-family: Sans-Serif;
+    line-height: 1.4;
+}
+.container {
+    display flex;
+    padding-top 108px;
+    flex-flow row wrap;
+    justify-content center;
+    color $mainFontColor;
+    .article-info{
+        border-top 2px solid $borderColor;
+        border-bottom  2px solid $borderColor;
+        padding 10px 0;
+        display flex;
+        flex-flow row wrap;
+        & > .time{
+            flex 1;
+        }
+        & > .author{
+            flex 2;
+        }
+        & > .social_buttons{
+            flex 1;
+        }
+    }
+    .title{
+        margin 5px 0;
+    }
+    & > section{
+        width 640px;
+        margin-right 25px;
+        & > article{
+            margin-bottom 60px;
+            & > header{
+                color $mainFontColor;
+                font-weight bolder;
+                font-size: 1.5rem;
+            }
+        }
+
+
+    }
+    & > aside{
+        width 254px;
+        & > section{
+            margin-bottom 35px
+            & > header{
+                border-bottom 5px solid $borderElementColor;
+                font-weight bolder;
+                font-size: 1.2rem;
+                color $borderElementColor;
+            }
+            & > header > .square {
+                display inline-block;
+                width: 30px;
+                height: 25px;
+                margin-bottom -10px;
+                margin-right 10px;
+                background: $borderElementColor;
+            }
+        }
+    }
+
+}
+body > header{
+    position fixed;
+    width 100%
+    border-bottom 5px solid #c6defa;
+    & > nav{
+        display flex;
+        flex-flow row wrap;
+        justify-content center;
+        margin 0;
+        background $topMenuColor;
+        & > a{
+            text-decoration none
+            display block;
+            padding 1em;
+            color #fff;
+            &:hover{
+                background $topMenuHoverColor
+            }
+        }
+
+    }
+
+}
